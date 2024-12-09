@@ -5,7 +5,7 @@ import com.ecommerce.project.dto.CategoryResponse;
 import com.ecommerce.project.exceptions.APIExceptions;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
-import com.ecommerce.project.repository.CategoryRepository;
+import com.ecommerce.project.repositories.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
