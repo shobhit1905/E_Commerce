@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -240,5 +241,21 @@ public class ProductService {
         return modelMapper.map(savedProduct , ProductDTO.class) ;
     }
 
+    public void uploadCSV(String fileContent) {
 
+        List<String> productData = List.of(fileContent.split("\n"));
+        for(int i=1 ; i<productData.size() ; i++) {
+            String[] row = productData.get(i).split(",");
+            ProductDTO p = ProductDTO.builder()
+                            .productName(row[0])
+                            .description(row[1])
+                            .price(Double.parseDouble(row[2]))
+                            .discount(Double.parseDouble(row[3]))
+                    .quantity(Integer.parseInt(row[4]))
+                    .build() ;
+            Long categoryId = Long.parseLong(row[5]) ;
+            addNewProduct(p, categoryId) ;
+        }
+
+    }
 }

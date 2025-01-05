@@ -81,4 +81,10 @@ public class ProductController {
         ProductDTO updatedProduct = productService.updateProductImage(productId , image) ;
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
+
+    @PostMapping("/admin/uploadCSV/category/{categoryId}")
+    public void uploadCSV(@RequestPart("file") MultipartFile file) throws IOException {
+        String fileContent = new String(file.getBytes());
+        productService.uploadCSV(fileContent) ;
+    }
 }

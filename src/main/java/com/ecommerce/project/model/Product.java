@@ -19,6 +19,7 @@ import java.util.List;
 @Getter
 @Table(name = "products")
 @ToString
+@Builder
 public class Product {
 
     @Id
