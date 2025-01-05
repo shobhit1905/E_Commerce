@@ -6,8 +6,8 @@ import com.ecommerce.project.exceptions.APIExceptions;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
 import com.ecommerce.project.model.Product;
-import com.ecommerce.project.repositories.CategoryRepository;
-import com.ecommerce.project.repositories.ProductRepository;
+import com.ecommerce.project.repository.CategoryRepository;
+import com.ecommerce.project.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -158,7 +158,7 @@ public class ProductService {
 
     public ProductDTO updateProduct(ProductDTO productDto , Long productId){
         //get the existing product from the db
-        Product existingProduct = productRepository.findById(Math.toIntExact(productId)).orElseThrow(
+        Product existingProduct = productRepository.findById(productId).orElseThrow(
                 () -> new ResourceNotFoundException("Product" , "productId" , productId)
         ) ;
 
@@ -179,7 +179,7 @@ public class ProductService {
     }
 
     public ProductDTO deleteProduct(Long productId){
-        Product existingProduct = productRepository.findById(Math.toIntExact(productId)).orElseThrow(
+        Product existingProduct = productRepository.findById(productId).orElseThrow(
                 () -> new ResourceNotFoundException("Product" , "productId" , productId)
         ) ;
 
@@ -189,7 +189,7 @@ public class ProductService {
 
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
         //get the product from db
-        Product productFromDB= productRepository.findById(Math.toIntExact(productId)).orElseThrow(
+        Product productFromDB= productRepository.findById(productId).orElseThrow(
                 () -> new ResourceNotFoundException("Product" , "productId" , productId)
         ) ;
 

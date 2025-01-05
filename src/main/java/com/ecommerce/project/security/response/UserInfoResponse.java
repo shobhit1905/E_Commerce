@@ -1,6 +1,5 @@
 package com.ecommerce.project.security.response;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,21 +7,30 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserInfoResponse {
 
-    private Long id;
-    private String jwtToken ;
+    private Long id ;
 
-    private String userName ;
+    private String username ;
 
-    private List<String> roles;
+    private String token ;
 
-    public UserInfoResponse(Long id ,String userName , String jwtToken, List<String> roles) {
-        this.jwtToken = jwtToken;
-        this.userName = userName;
+    private List<String> roles ;
+
+    public UserInfoResponse(Long id, String username, List<String> roles) {
+        this.id = id;
+        this.username = username;
         this.roles = roles;
-        this.id = id ;
+    }
+
+    public UserInfoResponse(Long id, String username, List<String> roles, String string) {
+        this.id = id;
+        this.username = username;
+        this.roles = roles;
+        this.token = string;
     }
 }

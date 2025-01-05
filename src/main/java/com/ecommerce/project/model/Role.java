@@ -1,27 +1,26 @@
 package com.ecommerce.project.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "Roles")
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "roles")
+@ToString
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer roleId ;
 
-    @Enumerated(EnumType.STRING) // to store the enum as String not as integers
-    @Column(length = 20)
-    private AppRoles roleName ;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppRole roleName ;
 
-    public Role(AppRoles appRoles) {
-        this.roleName = appRoles;
+    public Role(AppRole roleName) {
+        this.roleName = roleName;
     }
 }

@@ -1,6 +1,7 @@
 package com.ecommerce.project.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -16,27 +17,24 @@ import java.util.Map;
 
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
-    private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(AuthEntryPointJwt.class);
 
     @Override
-    public void commence(HttpServletRequest request , HttpServletResponse response, AuthenticationException exception) throws IOException {
-        logger.error("Unauthorized error : {}", exception.getMessage());
-        logger.error("e: ", exception);
-
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        logger.error("Unauthorized error : {}" , authException.getMessage());
+        System.out.println(authException.getMessage());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         final Map<String , Object> body = new HashMap<>() ;
+        body.put("status" , HttpServletResponse.SC_UNAUTHORIZED);
+        body.put("error" , "Unauthorized");
+        body.put("message" , authException.getMessage());
+        body.put("path" , request.getServletPath());
 
-        body.put("status" , HttpServletResponse.SC_UNAUTHORIZED) ;
-        body.put("error" , "Unauthorized") ;
-        body.put("message" , exception.getMessage()) ;
-        body.put("path" , request.getServletPath()) ;
-
-        final ObjectMapper mapper = new ObjectMapper() ;
-        mapper.writeValue(response.getOutputStream(), body);
-
+        final ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(response.getOutputStream() , body);
     }
-
 }

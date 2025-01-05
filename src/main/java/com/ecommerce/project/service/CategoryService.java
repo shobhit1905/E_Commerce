@@ -5,7 +5,7 @@ import com.ecommerce.project.dto.CategoryResponse;
 import com.ecommerce.project.exceptions.APIExceptions;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
-import com.ecommerce.project.repositories.CategoryRepository;
+import com.ecommerce.project.repository.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class CategoryService{
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
-        //Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+
         Pageable pageDetails = PageRequest.of(pageNumber , pageSize , sortByAndOrder);
         Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
         List<Category> categories = categoryPage.getContent() ;

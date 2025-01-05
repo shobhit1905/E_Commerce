@@ -1,7 +1,6 @@
 package com.ecommerce.project.security.jwt;
 
 import com.ecommerce.project.security.services.UserDetailsServiceImpl;
-import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,31 +15,35 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
+
 @Component
-public class AuthTokenFilter extends OncePerRequestFilter { // perform actions once per request
+public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private JwtUtils jwtUtils ;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService ;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, java.io.IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logger.debug("AuthTokenFilter called for URI : {}", request.getRequestURI());
+
         try{
-            String jwt = parseJwt(request) ;
+            String jwt = jwtUtils.getJwtFromCookie(request);
             if(jwt != null && jwtUtils.validateJwtToken(jwt)){
-                String userName = jwtUtils.getUserNameFromJwtToken(jwt) ;
+                String username = jwtUtils.getUserNameFromJwt(jwt);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                 userDetails, null, userDetails.getAuthorities()) ;
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails,
+                                null, userDetails.getAuthorities());
 
-                logger.debug("Roles for JWT: {}", userDetails.getAuthorities());
+                logger.debug("Roles from JWT : {}", userDetails.getAuthorities());
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
@@ -48,18 +51,10 @@ public class AuthTokenFilter extends OncePerRequestFilter { // perform actions o
             }
         }
         catch (Exception e){
-            logger.error("Cannot set user Authentication : {}", e.getMessage());
+            logger.error("Cannot set user authentication : {}", e.getMessage());
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(HttpServletRequest request){
-        String jwt = request.getHeader("Authorization");
-        logger.debug("AuthTokenFilter.java: {}", jwt);
-        if (jwt!= null && jwt.startsWith("Bearer ")) {
-            return jwt.substring(7);
-        }
-        return null;
-    }
 }

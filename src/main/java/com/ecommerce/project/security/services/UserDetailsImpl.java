@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,16 +19,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @NoArgsConstructor
 @Data
+@Getter
+@Setter
 public class UserDetailsImpl implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Getter
     private Long id;
 
     private String username;
 
-    @Getter
     private String email;
 
     @JsonIgnore
@@ -52,7 +53,7 @@ public class UserDetailsImpl implements UserDetails {
         return new UserDetailsImpl(
                 user.getUserId(),
                 user.getUserName(),
-                user.getEmail(),
+                user.getUserEmail(),
                 user.getPassword(),
                 authorities);
     }
@@ -70,26 +71,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername() {
         return username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     @Override

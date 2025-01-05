@@ -9,13 +9,15 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-@Table(name = "Products")
+@Table(name = "products")
 @ToString
 public class Product {
 
@@ -51,8 +53,10 @@ public class Product {
     @JoinColumn(name = "categoryId")
     private Category category ;
 
-    @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "sellerId")
     private User user ;
+
+    @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+    private List<CartItem> cartProducts = new ArrayList<CartItem>();
 }

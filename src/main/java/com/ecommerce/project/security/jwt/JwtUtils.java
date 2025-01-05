@@ -1,88 +1,121 @@
 package com.ecommerce.project.security.jwt;
 
+import com.ecommerce.project.security.services.UserDetailsImpl;
+import com.ecommerce.project.security.services.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
-
 @Component
 public class JwtUtils {
-    private static final Logger logger =  LoggerFactory.getLogger(JwtUtils.class);
 
-    // the below values are fetched in from application.properties file
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(JwtUtils.class);
+
     @Value("${spring.app.jwtSecret}")
-    private String jwtSecret ;  // used to sign the tokens
+    private String jwtSecret ;
 
     @Value("${spring.app.jwtExpirationMs}")
-    private int jwtExpirationMs ;
+    private String jwtExpirationMs ;
 
-    // getting the jwt token from http header
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        logger.debug("Authorization token: {}", bearerToken);
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7) ; // remove bearer prefix
-        }
-        return null ;
-    }
+    @Value("${spring.app.jwtCookieName}")
+    private String jwtCookie ;
 
-    // generate token from username
-    public String generateTokenFromUsername(UserDetails userDetails) {
-        String userName = userDetails.getUsername();
+    // Bearer   Token based Authentication
+
+//    public String getJwtFromHeader(HttpServletRequest request){
+//        String bearerToken = request.getHeader("Authorization");
+//        System.out.printf("Authorization Header: {}", bearerToken);
+//        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+//            return bearerToken.substring(7);
+//        }
+//        return null;
+//    }
+
+
+    public String generateTokenFromUsername(String username) {
+        // Parse the jwtExpirationMs from String to long
+        long expirationMs = Long.parseLong(jwtExpirationMs);
+
         return Jwts.builder()
-                .setSubject(userName)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + expirationMs)) // Corrected
                 .signWith(key())
-                .compact() ;
+                .compact();
     }
 
-    public String getUserNameFromJwtToken(String token){
-        return Jwts.parser().setSigningKey((SecretKey) key()).parseClaimsJws(token).getBody().getSubject();
+    public String getUserNameFromJwt(String token){
+        return Jwts.parser()
+                .verifyWith((SecretKey) key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject() ;
     }
 
     private Key key(){
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(String authToken){
         try{
             System.out.println("Validate");
-            Jwts.parser().setSigningKey((SecretKey) key()).parseClaimsJws(authToken);
-            return true ;
+            Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);
+            return true;
         }
         catch(MalformedJwtException e){
-            logger.error("Invalid JWT token : {}", e.getMessage());
+            logger.error("Invalid JWT : {}",e.getMessage());
         }
         catch(ExpiredJwtException e){
-            logger.error("JWT token is expired : {}", e.getMessage());
+            logger.error("JWT is expired : {}",e.getMessage());
         }
         catch(UnsupportedJwtException e){
-            logger.error("Unsupported JWT token is not supported : {}", e.getMessage());
+            logger.error("JWT is not supported : {}",e.getMessage());
         }
-        catch (IllegalArgumentException e){
-            logger.error("JWT claims string is empty : {}", e.getMessage());
+        catch(IllegalArgumentException e){
+            logger.error("JWT claims string is empty: {}",e.getMessage());
         }
 
         return false ;
     }
+
+    // Cookie based Authentication
+
+    public String getJwtFromCookie(HttpServletRequest request){
+        Cookie cookie = WebUtils.getCookie(request , jwtCookie) ;
+        if(cookie != null)
+            return cookie.getValue();
+
+        return null;
+    }
+
+    public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal){
+        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+        return ResponseCookie.from(jwtCookie , jwt)
+                .path("/api")
+                .maxAge(24*60*60)
+                .httpOnly(false)
+                .build() ;
+    }
+
+    public ResponseCookie getCleanJwtCookie(){
+        return ResponseCookie.from(jwtCookie , null)
+                .path("/api")
+                .build() ;
+    }
 }
-
-
-// UserDetail is an interface that is used to represent a single user in the application that we want to authenticate
-// We will implement our own custom UserDetail class as to meet the project requirement
-// UserDetailService is a core interface that allows us to load user specific data
-// We will also customize this to our requirements
