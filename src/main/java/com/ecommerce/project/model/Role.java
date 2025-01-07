@@ -2,6 +2,10 @@ package com.ecommerce.project.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,4 +27,10 @@ public class Role {
     public Role(AppRole roleName) {
         this.roleName = roleName;
     }
+
+    @CreationTimestamp
+    private LocalDateTime creationDate ;
+
+    @UpdateTimestamp
+    private LocalDateTime modificationDate ;
 }

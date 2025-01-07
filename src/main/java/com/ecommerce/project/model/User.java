@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,14 +58,20 @@ public class User {
         this.password = password;
     }
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "user_address" ,
-    joinColumns = @JoinColumn(name = "userId") ,
-    inverseJoinColumns = @JoinColumn(name = "addressId"))
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST} , orphanRemoval = true)
+//    @JoinTable(name = "user_address" ,
+//    joinColumns = @JoinColumn(name = "userId") ,
+//    inverseJoinColumns = @JoinColumn(name = "addressId"))
     private List<Address> addresses = new ArrayList<>() ;
 
 
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE , CascadeType.PERSIST} , orphanRemoval = true)
     @ToString.Exclude
     private Cart cart ;
+
+    @CreationTimestamp
+    private LocalDateTime creationDate ;
+
+    @UpdateTimestamp
+    private LocalDateTime modificationDate ;
 }

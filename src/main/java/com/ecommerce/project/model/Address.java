@@ -3,7 +3,10 @@ package com.ecommerce.project.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +42,15 @@ public class Address {
     @NotBlank(message = "Zip Code should not be blank")
     private String zipCode ;
 
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> user = new ArrayList<>() ;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user ;
+
+    @CreationTimestamp
+    private LocalDateTime creationDate ;
+
+    @UpdateTimestamp
+    private LocalDateTime modificationDate ;
 
 
 
