@@ -17,6 +17,10 @@ public class UserInfoResponse {
 
     private String username ;
 
+    private String firstName ;
+
+    private String lastName ;
+
     private String token ;
 
     private List<String> roles ;
@@ -32,5 +36,13 @@ public class UserInfoResponse {
         this.username = username;
         this.roles = roles;
         this.token = string;
+    }
+
+    public UserInfoResponse(Long id, String username, String firstName, String lastName, List<String> roles) {
+        this.id = id;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.roles = roles;
     }
 }

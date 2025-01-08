@@ -92,7 +92,7 @@ public class AuthController {
 
         //Create new user
 
-        User user = new User(request.getUsername() , request.getEmail() , encoder.encode(request.getPassword())) ;
+        User user = new User(request.getFirstName(), request.getLastName(), request.getUsername() , request.getEmail() , encoder.encode(request.getPassword())) ;
 
         Set<String> strRoles = request.getRoles() ;
 
@@ -150,7 +150,11 @@ public class AuthController {
                     .map(item -> item.getAuthority())
                     .toList();
 
-            UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles);
+            String firstName = userRepository.findFirstNameByUserId(userDetails.getId()).orElse(null);
+            String lastName = userRepository.findLastNameByUserId(userDetails.getId()).orElse(null);
+
+            UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), firstName ,
+                    lastName , roles);
             return ResponseEntity.ok().body(response) ;
         }
 

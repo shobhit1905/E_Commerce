@@ -22,6 +22,12 @@ public class SignUpRequest {
     @Size(min = 5, message = "Username should contain at least 5 characters")
     private String username ;
 
+    @NotBlank(message = "First name should not be blank")
+    private String firstName ;
+
+    @NotBlank(message = "Last name should not be blank")
+    private String lastName ;
+
     @Email
     @NotBlank(message = "Email should not be blank")
     private String email ;

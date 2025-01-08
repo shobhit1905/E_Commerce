@@ -32,6 +32,12 @@ public class User {
     @Column(unique = true)
     private String userName ;
 
+    @Column(nullable = false)
+    private String firstName ;
+
+    @Column(nullable = false)
+    private String lastName ;
+
     @Email
     @NotBlank(message = "User email should not be blank")
     @Column(unique = true)
@@ -54,6 +60,14 @@ public class User {
 
     public User(String userName, String userEmail, String password) {
         this.userName = userName;
+        this.userEmail = userEmail;
+        this.password = password;
+    }
+
+    public User(String firstName, String lastName, String userName, String userEmail, String password) {
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.userEmail = userEmail;
         this.password = password;
     }
