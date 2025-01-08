@@ -1,6 +1,7 @@
 package com.ecommerce.project.service;
 
 import com.ecommerce.project.dto.AddressDTO;
+import com.ecommerce.project.exceptions.APIExceptions;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Address;
 import com.ecommerce.project.model.User;
@@ -43,6 +44,10 @@ public class AddressService {
     public List<AddressDTO> getAllAddresses() {
 
         List<Address> addresses = addressRepository.findAll() ;
+
+        if(addresses == null) {
+            throw new APIExceptions("No addresses found") ;
+        }
         List<AddressDTO> addressDTOs = addresses.stream()
                 .map(address -> {
                     AddressDTO addressDTO = modelMapper.map(address , AddressDTO.class) ;
@@ -63,6 +68,9 @@ public class AddressService {
 
     public List<AddressDTO> getUserAddresses(Long userId) {
         List<Address> addresses = addressRepository.findAddressByUserId(userId) ;
+        if(addresses == null) {
+            throw new APIExceptions("No addresses found") ;
+        }
         List<AddressDTO> addressDTOs = addresses.stream().map(
                 address -> {
                     AddressDTO addressDTO = modelMapper.map(address, AddressDTO.class) ;

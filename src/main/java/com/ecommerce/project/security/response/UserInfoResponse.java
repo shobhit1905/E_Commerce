@@ -31,11 +31,12 @@ public class UserInfoResponse {
         this.roles = roles;
     }
 
-    public UserInfoResponse(Long id, String username, List<String> roles, String string) {
+    public UserInfoResponse(Long id, String username, List<String> roles, String firstName, String lastName) {
         this.id = id;
         this.username = username;
         this.roles = roles;
-        this.token = string;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public UserInfoResponse(Long id, String username, String firstName, String lastName, List<String> roles) {
@@ -45,4 +46,5 @@ public class UserInfoResponse {
         this.lastName = lastName;
         this.roles = roles;
     }
+
 }

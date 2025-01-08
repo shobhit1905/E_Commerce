@@ -72,8 +72,8 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList() ;
-
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles , cookie.getValue()) ;
+        User user = userRepository.findById(userDetails.getId()).get();
+        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), user.getFirstName() , user.getLastName(), roles);
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE ,
                 cookie.toString())

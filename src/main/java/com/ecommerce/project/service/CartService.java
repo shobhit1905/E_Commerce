@@ -109,13 +109,16 @@ public class CartService {
             throw new APIExceptions("No cart exists") ;
 
         List<CartDTO> cartDTOs = carts.stream().map(cart -> {
-            CartDTO cartDTO = modelMapper.map(cart , CartDTO.class) ;
-            List<ProductDTO> products = cart.getCartItems().stream()
-                    .map(p -> modelMapper.map(p.getProduct() , ProductDTO.class)).toList() ;
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
-            cartDTO.setProducts(products);
+            List<ProductDTO> products = cart.getCartItems().stream().map(cartItem -> {
+                ProductDTO productDTO = modelMapper.map(cartItem.getProduct(), ProductDTO.class);
+                productDTO.setQuantity(cartItem.getQuantity()); // Set the quantity from CartItem
+                return productDTO;
+            }).toList();
 
             return cartDTO;
+
         }).toList() ;
 
         return cartDTOs ;

@@ -16,8 +16,8 @@ public class Payment{
     // this entity represents the payment facility for the ecommerce application
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID paymentId ;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long paymentId ;
 
     @OneToOne(mappedBy = "payment" , cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Order order ;
@@ -33,17 +33,11 @@ public class Payment{
 
     private String pgName ;
 
-    public Payment(UUID paymentId, String pgPaymentId, String pgStatus, String pgResponseMessage, String pgName) {
-        this.paymentId = paymentId;
-        this.pgPaymentId = pgPaymentId;
-        this.pgStatus = pgStatus;
-        this.pgResponseMessage = pgResponseMessage;
-        this.pgName = pgName;
-    }
-    public Payment(String paymentMethod, String pgPaymentId, String pgStatus, String pgResponseMessage) {
+    public Payment(String paymentMethod, String pgName, String pgPaymentId, String pgResponseMessage, String pgStatus) {
         this.paymentMethod = paymentMethod;
         this.pgPaymentId = pgPaymentId;
         this.pgStatus = pgStatus;
         this.pgResponseMessage = pgResponseMessage;
+        this.pgName = pgName;
     }
 }

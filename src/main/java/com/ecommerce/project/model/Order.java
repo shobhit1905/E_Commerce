@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "orders")
 public class Order {
 
     // This entity refers to the overall order of the customer , in which we have multiple order items
